@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
@@ -11,8 +12,9 @@ export function getControlDatabase():Database {
 }
 export function getTenantDatabase(id:string,connectionString?:string|null):Database {
  if(!connectionString)return getControlDatabase();
- const existing=tenantDatabases.get(id);if(existing)return existing;
- const db=drizzle(neon(connectionString),{schema});tenantDatabases.set(id,db);
+ const cacheKey=id+":"+createHash("sha256").update(connectionString).digest("hex");
+ const existing=tenantDatabases.get(cacheKey);if(existing)return existing;
+ const db=drizzle(neon(connectionString),{schema});tenantDatabases.set(cacheKey,db);
  if(tenantDatabases.size>100){const first=tenantDatabases.keys().next().value;if(first)tenantDatabases.delete(first);}
  return db;
 }
