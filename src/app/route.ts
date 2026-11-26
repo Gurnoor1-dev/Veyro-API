@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";
+export function GET(){return NextResponse.json({name:"Veyro API",version:"1.0.0",status:"online",basePath:"/api/v1",endpoints:["GET /api/v1/list-organisations","GET /api/v1/{organisation-id}/list-pilots","GET /api/v1/{organisation-id}/{pilot-id}/flights?page=1","GET /api/v1/{organisation-id}/{pilot-id}/flights/{flight-id}"]},{headers:{"Cache-Control":"no-store"}});}
